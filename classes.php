@@ -6,7 +6,7 @@ function getPriceFromSupplier()
     return 0;
 }
 
-function getDimentionsFromSupplier()
+function getDimensionsFromSupplier()
 {
     echo 'Посылаем запрос поставщику';
     return ["length" => 100, "width" => 50, "height" => 30];
@@ -46,13 +46,14 @@ function orderTVSet($color, $screenSize, $tuners)
 
 class GoodsClass
 {
-    private $dimentions = ["length" => 0, "width" => 0, "height" => 0];
+    private $dimensions = ["length" => 0, "width" => 0, "height" => 0];
     private $netWeight = 0;
     private $grossWeight = 0;
     private $purchasePrice = 0;
     private $price = 0;
     private $discount = 0;
     private $status = "absent";
+    private $color = "invisible";
     protected $category;
     private $name;
     private $description;
@@ -63,17 +64,17 @@ class GoodsClass
         $this->name = $name;
         $this->netWeight = $netWeight;
         $this->description = $name;
-        echo 'Goods constructed';
+        echo 'Goods constructed' . '<br>';
     }
 
     public function __destruct()
     {
-        echo 'Goods destructed';
+        echo 'Goods destructed' . '<br>';
     }
 
-    public function getDimentions()
+    public function getDimensions()
     {
-        return $this->dimentions;
+        return $this->dimensions;
     }
 
     public function getNetWeight()
@@ -111,7 +112,7 @@ class GoodsClass
         return $this->status;
     }
 
-    public function getDiscription()
+    public function getDescription()
     {
         return $this->description;
     }
@@ -132,9 +133,9 @@ class GoodsClass
         $this->discount = $discount;
     }
 
-    public function setDiscription($description)
+    public function setDescription($description)
     {
-        $this->discription = $description;
+        $this->description = $description;
     }
 
     public function sell()
@@ -143,23 +144,24 @@ class GoodsClass
         $this->status = "sold";
     }
 
-    public function order()
+    public function order($color)
     {
         echo 'Заказываем у поставщика, получаем закупочную цену и характеристики';
         $this->purchasePrice = getPriceFromSupplier();
-        $this->dimentions = getDimentionsFromSupplier();
+        $this->dimensions = getDimentionsFromSupplier();
         $this->grossWeight = getGrossWeightFromSupplier();
         $this->status = "ordered";
+        $this->color = $color;
     }
 
     public function showInfo()
     {
         echo $this->name . PHP_EOL;
         echo 'category ' . $this->category . PHP_EOL;
-        echo 'discription: ' . $this->description . PHP_EOL;
-        echo 'length ' . $this->dimentions["length"] . PHP_EOL;
-        echo 'width ' . $this->dimentions["width"] . PHP_EOL;
-        echo 'height ' . $this->dimentions["height"] . PHP_EOL;
+        echo 'description: ' . $this->description . PHP_EOL;
+        echo 'length ' . $this->dimensions["length"] . PHP_EOL;
+        echo 'width ' . $this->dimensions["width"] . PHP_EOL;
+        echo 'height ' . $this->dimensions["height"] . PHP_EOL;
         echo 'netWeight ' . $this->netWeight;
         echo 'grossWeight ' . $this->grossWeight;
         echo 'price ' . $this->price;
@@ -186,12 +188,12 @@ class AutoVehicleClass extends GoodsClass
         $this->brand = $brand;
         $this->model = $model;
         $this->type = $type;
-        echo 'AutoVehicle constructed';
+        echo 'AutoVehicle constructed' . '<br>';
     }
 
-    public function order($color, $fuelType, $capacity, $loadCapacity)
+    public function order($color, $fuelType = null, $capacity = null, $loadCapacity = null)
     {
-        parent::order();
+        parent::order($color);
         if (orderAutoVehicle($color, $fuelType, $capacity, $loadCapacity)) {
             $this->color = $color;
             $this->fuelType = $fuelType;
@@ -208,7 +210,7 @@ class BallpointPenClass extends GoodsClass
     private $model;
     private $type;
     private $colorsNmb = 0;
-    private $colors = ['invisible'];
+    private $inkcolors = ['invisible'];
 
     public function __construct($netWeight, $description, $brand, $model, $type)
     {
@@ -216,14 +218,14 @@ class BallpointPenClass extends GoodsClass
         $this->brand = $brand;
         $this->model = $model;
         $this->type = $type;
-        echo 'BallpointPen constructed';
+        echo 'BallpointPen constructed' . '<br>';
     }
 
-    public function order($colors, $colorsNmb)
+    public function order($color, $colors = null, $colorsNmb = null, $inkcolors = null)
     {
-        parent::order();
+        parent::order($color);
         if (orderBallpointPen($colorsNmb, $colors)) {
-            $this->colors = $colors;
+            $this->inkcolors = $inkcolors;
             $this->colorsNmb = $colorsNmb;
         }
     }
@@ -240,12 +242,12 @@ class DuckClass extends GoodsClass
     public function __construct($name, $netWeight, $description)
     {
         parent::__construct('Domestic cattle', $name, $netWeight, $description);
-        echo 'Duck constructed';
+        echo 'Duck constructed' . '<br>';
     }
 
-    public function order($breed, $age, $sex)
+    public function order($color, $breed = null, $age = null, $sex = null)
     {
-        parent::order();
+        parent::order($color);
         if (orderDuck($breed, $age, $sex)) {
             $this->breed = $breed;
             $this->age = $age;
@@ -260,7 +262,6 @@ class TVSetClass extends GoodsClass
     private $brand;
     private $model;
     private $type;
-    private $color;
     private $screenSize;
     private $tuners;
 
@@ -270,14 +271,13 @@ class TVSetClass extends GoodsClass
         $this->brand = $brand;
         $this->model = $model;
         $this->type = $type;
-        echo 'TVSet constructed';
+        echo 'TVSet constructed' . '<br>';
     }
 
-    public function order($color, $screenSize, $tuners)
+    public function order($color, $screenSize = null, $tuners = null)
     {
-        parent::order();
+        parent::order($color);
         if (orderTVSet($color, $screenSize, $tuners)) {
-            $this->color = $color;
             $this->screenSize = $screenSize;
             $this->tuners = $tuners;
         }
